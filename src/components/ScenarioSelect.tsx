@@ -23,11 +23,11 @@ export const ScenarioSelect: React.FC<ScenarioSelectProps> = ({
           <span>AI Roleplay Conversation Coach</span>
         </div>
         <h1
-          className="text-3xl sm:text-5xl font-bold tracking-tight text-[#0c331d] leading-[1.15]"
+          className="text-3xl sm:text-5xl font-normal tracking-tight text-[#0c331d] leading-[1.2]"
           style={{ fontFamily: "'Lora', Georgia, serif" }}
         >
-          You know what you want to say.{' '}
-          <span className="block mt-1 font-normal italic text-[#1b5030]">Then they push back.</span>
+          <span className="font-bold">Confidence</span> for{' '}
+          <span className="italic text-[#1b5030]">conversations that matter.</span>
         </h1>
         <p className="mt-4 text-base sm:text-lg text-[#234b33] leading-relaxed max-w-2xl mx-auto">
           Rehearse high-stakes workplace conversations out loud before you have them for real.
