@@ -11,9 +11,6 @@ import {
   Sparkles,
   AlertTriangle,
   RotateCcw,
-  Subtitles,
-  User,
-  Bot,
 } from 'lucide-react';
 import { Turn, Difficulty, SessionMode, SessionState } from '../types.js';
 import { VoiceActivityIndicator } from './VoiceActivityIndicator.js';
@@ -43,8 +40,7 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [showSubtitlesAndText, setShowSubtitlesAndText] = useState(true);
-  const [liveSubtitle, setLiveSubtitle] = useState<{ speaker: 'victor' | 'user'; text: string } | null>(null);
+  const [showTranscriptDrawer, setShowTranscriptDrawer] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [isSubmittingText, setIsSubmittingText] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -166,12 +162,8 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
         if (speechTranscriberRef.current.isSupported()) {
           speechTranscriberRef.current.start((text, isFinal) => {
             if (isMuted) return;
-            setLiveSubtitle({ speaker: 'user', text });
             if (isFinal && text.trim()) {
               addTurn('user', text.trim(), 'final');
-              setTimeout(() => {
-                setLiveSubtitle((prev) => (prev?.speaker === 'user' ? null : prev));
-              }, 2500);
             }
           });
         }
@@ -208,10 +200,8 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
             }
           } else if (data.type === 'modelTranscript' && data.text) {
             currentModelTextRef.current += data.text;
-            setLiveSubtitle({ speaker: 'victor', text: currentModelTextRef.current });
           } else if (data.type === 'userTranscript' && data.text) {
             currentUserTextRef.current += data.text;
-            setLiveSubtitle({ speaker: 'user', text: currentUserTextRef.current });
           } else if (data.type === 'error') {
             setConnectionError(data.message || 'Live connection error');
             setSessionState('error');
@@ -262,7 +252,6 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
 
     // Add user turn immediately
     addTurn('user', text, 'final');
-    setLiveSubtitle({ speaker: 'user', text });
 
     if (sessionMode === 'voice' && wsRef.current?.readyState === WebSocket.OPEN) {
       // Send through WebSocket to Gemini Live
@@ -287,7 +276,6 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
         if (!res.ok) throw new Error(data.error || 'Failed to receive response');
 
         addTurn('victor', data.reply, 'final');
-        setLiveSubtitle({ speaker: 'victor', text: data.reply });
       } catch (err: any) {
         console.error('Chat error:', err);
         setConnectionError(err.message || 'Error sending message');
@@ -350,7 +338,7 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
       finalTurns.push({
         id: `turn-init-${Date.now()}`,
         speaker: 'user',
-        text: 'Victor, I wanted to discuss the missed delivery deadline on the payment integration.',
+        text: 'Victor, I wanted to discuss the repeated deadline postponements on the project.',
         status: 'final',
         timestamp: Date.now(),
       });
@@ -362,18 +350,18 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-6 sm:py-8">
       {/* Active Header & Difficulty Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 bg-white p-4 rounded-xl border border-[#e8e4d3] shadow-2xs">
         <div className="flex items-center space-x-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#0c331d] animate-ping" />
+          <span className="text-xs font-bold uppercase tracking-wider text-[#0c331d]">
             Active Conversation with Victor
           </span>
-          <span className="text-slate-300">|</span>
+          <span className="text-stone-300">|</span>
           <span
-            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+            className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
               difficulty === 'challenging'
                 ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                : 'bg-emerald-100 text-emerald-900 border border-emerald-200'
+                : 'bg-[#fef9c3] text-[#0c331d] border border-[#fde047]'
             }`}
           >
             {difficulty === 'challenging' ? 'Challenging mode' : 'Gentle mode'}
@@ -381,29 +369,14 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* Subtitles & text toggle */}
-          <button
-            id="toggle-subtitles-btn"
-            onClick={() => setShowSubtitlesAndText(!showSubtitlesAndText)}
-            className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              showSubtitlesAndText
-                ? 'bg-indigo-50 text-indigo-800 border border-indigo-200'
-                : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-            }`}
-            title="Toggle live subtitles and text transcript alongside voice"
-          >
-            <Subtitles className="w-3.5 h-3.5" />
-            <span>{showSubtitlesAndText ? 'Text: ON' : 'Text: OFF'}</span>
-          </button>
-
           {difficulty === 'challenging' && (
             <button
               id="lower-intensity-btn"
               onClick={handleLowerIntensity}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#0c331d] hover:text-black bg-[#f4f1e5] hover:bg-[#e9e5d4] border border-[#e2decb] transition-colors cursor-pointer"
               title="Step down resistance to gentle mode"
             >
-              <ArrowDownCircle className="w-3.5 h-3.5 text-blue-600" />
+              <ArrowDownCircle className="w-3.5 h-3.5 text-[#0c331d]" />
               <span>Lower intensity</span>
             </button>
           )}
@@ -438,15 +411,15 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
       {turns.length === 0 && sessionState === 'active' && (
         <div
           id="initial-greeting-guidance"
-          className="mt-4 p-4 rounded-2xl bg-indigo-50/80 border border-indigo-200 text-xs sm:text-sm text-indigo-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+          className="mt-4 p-4 rounded-2xl bg-[#fbf8ee] border border-[#e8e4d3] text-xs sm:text-sm text-[#143622] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs"
         >
           <div className="flex items-start space-x-3">
-            <Sparkles className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-[#0c331d] shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-indigo-950">
+              <p className="font-semibold text-[#0c331d]">
                 You begin: Greet Victor to start the conversation
               </p>
-              <p className="mt-0.5 text-xs text-indigo-800 leading-relaxed">
+              <p className="mt-0.5 text-xs text-[#2c523b] leading-relaxed">
                 Speak into the microphone or type your greeting below. If you don't mention the topic directly, Victor will venture a guess about what it is about.
               </p>
             </div>
@@ -455,7 +428,7 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
             <button
               type="button"
               onClick={() => setTextInput('Hi Victor, do you have a quick minute for me?')}
-              className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-100 text-indigo-700 text-xs font-medium border border-indigo-200 transition-colors cursor-pointer"
+              className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#fef9c3] text-[#0c331d] text-xs font-medium border border-[#e8e4d3] transition-colors cursor-pointer"
               title="Insert greeting"
             >
               "Hi Victor, got a quick minute?"
@@ -463,7 +436,7 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
             <button
               type="button"
               onClick={() => setTextInput('Hi Victor, I would like to talk about the release delay.')}
-              className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-100 text-indigo-700 text-xs font-medium border border-indigo-200 transition-colors cursor-pointer"
+              className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#fef9c3] text-[#0c331d] text-xs font-medium border border-[#e8e4d3] transition-colors cursor-pointer"
               title="Insert greeting with topic"
             >
               "Start with topic directly..."
@@ -472,46 +445,17 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
         </div>
       )}
 
-      {/* Live Subtitle Overlay (shown additionally alongside voice) */}
-      {showSubtitlesAndText && liveSubtitle && liveSubtitle.text && (
-        <div
-          id="live-subtitle-overlay"
-          className={`mt-3 p-3.5 rounded-xl text-xs sm:text-sm flex items-start space-x-2.5 transition-all shadow-xs border ${
-            liveSubtitle.speaker === 'victor'
-              ? 'bg-indigo-50/90 text-indigo-950 border-indigo-200'
-              : 'bg-white text-slate-900 border-slate-200'
-          }`}
-        >
-          <div className="mt-0.5 shrink-0">
-            {liveSubtitle.speaker === 'victor' ? (
-              <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-indigo-200/80 text-indigo-900 text-[10px] font-bold uppercase">
-                <Bot className="w-2.5 h-2.5" />
-                <span>Victor</span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-slate-200 text-slate-900 text-[10px] font-bold uppercase">
-                <User className="w-2.5 h-2.5" />
-                <span>You</span>
-              </span>
-            )}
-          </div>
-          <p className="flex-1 font-medium leading-relaxed italic">
-            "{liveSubtitle.text}"
-          </p>
-        </div>
-      )}
-
       {/* Core Practice Controls Bar */}
-      <div className="mt-5 bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-5 bg-white rounded-2xl border border-[#e8e4d3] p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
         {/* Left: Pause / Resume & Mute */}
         <div className="flex items-center space-x-2">
           <button
             id="pause-resume-btn"
             onClick={handleTogglePause}
-            className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               sessionState === 'paused'
-                ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                ? 'bg-[#0c331d] hover:bg-[#154528] text-white shadow-2xs'
+                : 'bg-[#f4f1e5] hover:bg-[#e9e5d4] text-[#0c331d]'
             }`}
           >
             {sessionState === 'paused' ? (
@@ -530,10 +474,10 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
           <button
             id="mute-btn"
             onClick={handleToggleMute}
-            className={`inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               isMuted
                 ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                : 'bg-[#f4f1e5] hover:bg-[#e9e5d4] text-[#0c331d]'
             }`}
           >
             {isMuted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
@@ -546,17 +490,17 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
           <button
             id="stop-practice-btn"
             onClick={onStopPractice}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#0c331d] bg-[#fef9c3] hover:bg-[#fef08a] border border-[#fde047] transition-colors cursor-pointer"
             title="Stop practice immediately"
           >
-            <AlertOctagon className="w-3.5 h-3.5 text-amber-700" />
+            <AlertOctagon className="w-3.5 h-3.5 text-[#0c331d]" />
             <span>Stop practice</span>
           </button>
 
           <button
             id="end-conversation-btn"
             onClick={handleFinish}
-            className="inline-flex items-center space-x-2 px-5 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-all shadow-sm cursor-pointer"
+            className="inline-flex items-center space-x-2 px-5 py-2 rounded-xl text-xs font-semibold text-white bg-[#0c331d] hover:bg-[#154528] transition-all shadow-sm cursor-pointer"
           >
             <Square className="w-3.5 h-3.5 fill-current" />
             <span>End & get feedback</span>
@@ -574,13 +518,13 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
           <div className="flex items-center space-x-2">
             <button
               onClick={handleFinish}
-              className="px-3 py-1.5 rounded-lg font-semibold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100"
+              className="px-3 py-1.5 rounded-lg font-semibold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 cursor-pointer"
             >
               End and get feedback
             </button>
             <button
               onClick={onDiscardSession}
-              className="px-3 py-1.5 rounded-lg font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200"
+              className="px-3 py-1.5 rounded-lg font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 cursor-pointer"
             >
               Discard session
             </button>
@@ -601,28 +545,26 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
               : "Speak into your microphone or type your response to Victor here…"
           }
           disabled={sessionState === 'paused' || isSubmittingText}
-          className="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 disabled:bg-slate-100 transition-all"
+          className="flex-1 px-4 py-3 rounded-xl border border-[#d8d3c0] bg-white text-xs sm:text-sm text-[#0c331d] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#0c331d] disabled:bg-[#f4f1e5] transition-all"
         />
         <button
           id="send-text-btn"
           type="submit"
           disabled={!textInput.trim() || isSubmittingText || sessionState === 'paused'}
-          className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold inline-flex items-center space-x-1.5 disabled:opacity-40 transition-all"
+          className="px-5 py-3 rounded-xl bg-[#0c331d] hover:bg-[#154528] text-white text-xs sm:text-sm font-semibold inline-flex items-center space-x-1.5 disabled:opacity-40 transition-all cursor-pointer"
         >
           <span>Send</span>
           <Send className="w-3.5 h-3.5" />
         </button>
       </form>
 
-      {/* Live Transcript Drawer */}
-      {showSubtitlesAndText && (
-        <TranscriptDrawer
-          turns={turns}
-          isOpen={true}
-          onToggle={() => setShowSubtitlesAndText(!showSubtitlesAndText)}
-          mode={sessionMode}
-        />
-      )}
+      {/* Transcript Drawer (collapsed by default during practice) */}
+      <TranscriptDrawer
+        turns={turns}
+        isOpen={showTranscriptDrawer}
+        onToggle={() => setShowTranscriptDrawer(!showTranscriptDrawer)}
+        mode={sessionMode}
+      />
     </div>
   );
 };

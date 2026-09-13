@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, Sparkles, Trash2, Volume2, MessageSquare, AlertCircle } from 'lucide-react';
 import { SessionState, SessionMode } from '../types.js';
+import { AlignaLogo } from './AlignaLogo.js';
 
 interface NavbarProps {
   sessionState: SessionState;
@@ -18,32 +19,27 @@ export const Navbar: React.FC<NavbarProps> = ({
   hasActiveData,
 }) => {
   return (
-    <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
+    <header className="w-full bg-white/95 backdrop-blur-xs border-b border-[#e8e4d3] sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Brand & working title */}
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-lg tracking-tight">
-            A
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-bold text-lg tracking-tight text-slate-900">ALIGNA</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium border border-slate-200">
-                Prototype v0.2
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 hidden sm:block">Difficult Workplace Conversation Practice</p>
+          <AlignaLogo size={32} color="#0c331d" textColor="#0c331d" />
+          <div className="hidden sm:flex items-center space-x-2 pl-1 border-l border-[#e8e4d3]">
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#fef9c3] text-[#0c331d] font-semibold border border-[#fde047]">
+              Demo
+            </span>
+            <p className="text-xs text-stone-500 font-medium">Rehearse before it matters</p>
           </div>
         </div>
 
         {/* Current status and persistent controls */}
-        <div className="flex items-center space-x-2 sm:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           {sessionState !== 'idle' && sessionState !== 'discarded' && (
-            <div className="flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 border border-slate-200 text-slate-700">
+            <div className="flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-[#eef6f0] border border-[#cbe5d4] text-[#0c331d]">
               {sessionMode === 'voice' ? (
-                <Volume2 className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+                <Volume2 className="w-3.5 h-3.5 text-[#0c331d] animate-pulse" />
               ) : (
-                <MessageSquare className="w-3.5 h-3.5 text-slate-600" />
+                <MessageSquare className="w-3.5 h-3.5 text-[#0c331d]" />
               )}
               <span className="capitalize">{sessionState.replace('_', ' ')}</span>
             </div>

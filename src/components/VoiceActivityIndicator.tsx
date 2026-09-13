@@ -40,21 +40,21 @@ export const VoiceActivityIndicator: React.FC<VoiceActivityIndicatorProps> = ({
     icon = <AlertTriangle className="w-4 h-4 text-rose-600" />;
   } else if (isVictorSpeaking) {
     statusText = `${counterpartName} is speaking...`;
-    badgeColor = 'bg-indigo-50 text-indigo-900 border-indigo-200';
-    icon = <Volume2 className="w-4 h-4 text-indigo-600 animate-pulse" />;
+    badgeColor = 'bg-[#eef6f0] text-[#0c331d] border-[#cbe5d4] font-semibold';
+    icon = <Volume2 className="w-4 h-4 text-[#0c331d] animate-pulse" />;
   } else if (isListening) {
     if (isMuted) {
       statusText = 'Microphone muted';
-      badgeColor = 'bg-slate-100 text-slate-600 border-slate-200';
-      icon = <Mic className="w-4 h-4 text-slate-400" />;
+      badgeColor = 'bg-[#f4f1e5] text-stone-600 border-[#e2decb]';
+      icon = <Mic className="w-4 h-4 text-stone-400" />;
     } else if (isWaitingForGreeting) {
       statusText = 'Victor is listening — greet him to begin the conversation';
-      badgeColor = 'bg-emerald-50 text-emerald-900 border-emerald-300 font-semibold';
-      icon = <Mic className="w-4 h-4 text-emerald-600 animate-pulse" />;
+      badgeColor = 'bg-[#fef9c3] text-[#0c331d] border-[#fde047] font-semibold';
+      icon = <Mic className="w-4 h-4 text-[#0c331d] animate-pulse" />;
     } else {
       statusText = 'Listening to you...';
-      badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-      icon = <Mic className="w-4 h-4 text-emerald-600" />;
+      badgeColor = 'bg-[#eef6f0] text-[#0c331d] border-[#cbe5d4] font-medium';
+      icon = <Mic className="w-4 h-4 text-[#0c331d]" />;
     }
   }
 
@@ -78,28 +78,33 @@ export const VoiceActivityIndicator: React.FC<VoiceActivityIndicatorProps> = ({
   return (
     <div
       id="voice-activity-container"
-      className="w-full bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden"
+      className="w-full bg-white rounded-2xl border border-[#e8e4d3] shadow-sm p-6 sm:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden"
     >
       {/* Background ambient ring based on state */}
       <div
         className={`absolute inset-0 opacity-5 pointer-events-none transition-colors duration-500 ${
           isVictorSpeaking
-            ? 'bg-indigo-500'
+            ? 'bg-[#0c331d]'
             : isListening && !isMuted
-            ? 'bg-emerald-500'
+            ? 'bg-[#154528]'
             : sessionState === 'paused'
             ? 'bg-amber-500'
-            : 'bg-slate-400'
+            : 'bg-stone-300'
         }`}
       />
 
       {/* Role & Counterpart Header */}
       <div className="mb-4 z-10">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#244c34]">
           Simulated Counterpart
         </span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-0.5">{counterpartName}</h2>
-        <p className="text-xs sm:text-sm text-slate-600">Experienced team member · Defensive posture</p>
+        <h2
+          className="text-2xl sm:text-3xl font-bold text-[#0c331d] mt-0.5"
+          style={{ fontFamily: "'Lora', Georgia, serif" }}
+        >
+          {counterpartName}
+        </h2>
+        <p className="text-xs sm:text-sm text-[#2d553e]">Experienced team member · Defensive posture</p>
       </div>
 
       {/* Physical Audio Activity Waveform Display */}
@@ -116,10 +121,10 @@ export const VoiceActivityIndicator: React.FC<VoiceActivityIndicatorProps> = ({
             }}
             className={`w-2 sm:w-2.5 rounded-full transition-colors duration-200 ${
               isVictorSpeaking
-                ? 'bg-indigo-600'
+                ? 'bg-[#0c331d]'
                 : isListening && !isMuted && audioLevel > 0.05
-                ? 'bg-emerald-500'
-                : 'bg-slate-300'
+                ? 'bg-[#154528]'
+                : 'bg-[#d8d3c0]'
             }`}
           />
         ))}
@@ -136,7 +141,7 @@ export const VoiceActivityIndicator: React.FC<VoiceActivityIndicatorProps> = ({
       </div>
 
       {/* Non-emotion measurement disclaimer notice */}
-      <p className="text-[11px] text-slate-400 mt-4 z-10">
+      <p className="text-[11px] text-stone-400 mt-4 z-10">
         Acoustic voice activity indicator · Does not infer emotions or psychological states
       </p>
     </div>

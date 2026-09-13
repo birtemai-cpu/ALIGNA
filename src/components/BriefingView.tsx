@@ -43,56 +43,59 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
       <button
         id="briefing-back-btn"
         onClick={onBack}
-        className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 mb-6 transition-colors"
+        className="inline-flex items-center space-x-1.5 text-xs font-semibold text-[#2d553e] hover:text-[#0c331d] mb-6 transition-colors cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Back to scenario list</span>
       </button>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+      <div className="bg-white rounded-2xl border border-[#e8e4d3] shadow-sm p-6 sm:p-8">
         {/* Header */}
-        <div className="border-b border-slate-100 pb-5 mb-6">
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
+        <div className="border-b border-[#ece7d5] pb-5 mb-6">
+          <span className="px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#fef9c3] text-[#0c331d] border border-[#fde047]">
             Case Briefing
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+          <h1
+            className="text-2xl sm:text-3xl font-bold text-[#0c331d] mt-2"
+            style={{ fontFamily: "'Lora', Georgia, serif" }}
+          >
             Meeting with {scenario.counterpart}
           </h1>
-          <p className="text-sm text-slate-600 mt-1">{scenario.title}</p>
+          <p className="text-sm text-[#2d553e] mt-1">{scenario.title}</p>
         </div>
 
         {/* 3 Core Briefing Sections */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+          <div className="p-4 rounded-xl bg-[#fbf8ee] border border-[#e8e3d2]">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#244c34] mb-1">
               Your Role
             </h2>
-            <p className="text-sm font-semibold text-slate-900">{scenario.userRole}</p>
-            <p className="text-xs text-slate-500 mt-1">Leading the 1-on-1 feedback discussion</p>
+            <p className="text-sm font-semibold text-[#0c331d]">{scenario.userRole}</p>
+            <p className="text-xs text-[#2c523b] mt-1">Leading the 1-on-1 feedback discussion</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+          <div className="p-4 rounded-xl bg-[#fbf8ee] border border-[#e8e3d2]">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#244c34] mb-1">
               What Happened
             </h2>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              Victor missed deadlines without early risk warnings. Dependencies were blocked at the due date.
+            <p className="text-xs text-[#143622] leading-relaxed">
+              {scenario.situation}
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+          <div className="p-4 rounded-xl bg-[#fbf8ee] border border-[#e8e3d2]">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#244c34] mb-1">
               Your Goal
             </h2>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              Address the missing warning, explore causes without attacking, and agree on clear future risk notification.
+            <p className="text-xs text-[#143622] leading-relaxed">
+              {scenario.goal}
             </p>
           </div>
         </div>
 
         {/* Difficulty Selection */}
         <div className="mb-8">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#244c34] mb-2">
             Select Practice Intensity
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -100,28 +103,28 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
               type="button"
               id="difficulty-gentle-btn"
               onClick={() => onSelectDifficulty('gentle')}
-              className={`text-left p-4 rounded-xl border-2 transition-all flex items-start justify-between ${
+              className={`text-left p-4 rounded-xl border-2 transition-all flex items-start justify-between cursor-pointer ${
                 difficulty === 'gentle'
-                  ? 'border-slate-900 bg-slate-50 shadow-xs'
-                  : 'border-slate-200 hover:border-slate-300'
+                  ? 'border-[#0c331d] bg-[#fbf8ee] shadow-2xs'
+                  : 'border-[#e8e4d3] hover:border-[#cfc9b6]'
               }`}
             >
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm font-bold text-slate-900">Gentle practice</span>
+                  <span className="text-sm font-bold text-[#0c331d]">Gentle practice</span>
                   {difficulty === 'gentle' && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-medium">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[#0c331d] text-white font-medium">
                       Selected
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-[#2c523b] mt-1">
                   More space to think, with milder resistance. Opens up earlier after relevant questions.
                 </p>
               </div>
               <div
                 className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
-                  difficulty === 'gentle' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-300'
+                  difficulty === 'gentle' ? 'border-[#0c331d] bg-[#0c331d] text-white' : 'border-[#cfc9b6]'
                 }`}
               >
                 {difficulty === 'gentle' && <Check className="w-3 h-3" />}
@@ -132,28 +135,28 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
               type="button"
               id="difficulty-challenging-btn"
               onClick={() => onSelectDifficulty('challenging')}
-              className={`text-left p-4 rounded-xl border-2 transition-all flex items-start justify-between ${
+              className={`text-left p-4 rounded-xl border-2 transition-all flex items-start justify-between cursor-pointer ${
                 difficulty === 'challenging'
-                  ? 'border-slate-900 bg-slate-50 shadow-xs'
-                  : 'border-slate-200 hover:border-slate-300'
+                  ? 'border-[#0c331d] bg-[#fbf8ee] shadow-2xs'
+                  : 'border-[#e8e4d3] hover:border-[#cfc9b6]'
               }`}
             >
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm font-bold text-slate-900">Challenging practice</span>
+                  <span className="text-sm font-bold text-[#0c331d]">Challenging practice</span>
                   {difficulty === 'challenging' && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-medium">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[#0c331d] text-white font-medium">
                       Selected
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-[#2c523b] mt-1">
                   More direct resistance, requiring clearer facts and agreements, within the same safety boundaries.
                 </p>
               </div>
               <div
                 className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
-                  difficulty === 'challenging' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-300'
+                  difficulty === 'challenging' ? 'border-[#0c331d] bg-[#0c331d] text-white' : 'border-[#cfc9b6]'
                 }`}
               >
                 {difficulty === 'challenging' && <Check className="w-3 h-3" />}
@@ -164,15 +167,15 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
 
         {/* Notices & Guardrails */}
         <div className="space-y-3 mb-8">
-          <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-900">
-            <Shield className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+          <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-[#fef9c3]/70 border border-[#fde047] text-xs text-[#0c331d]">
+            <Shield className="w-4 h-4 text-[#0c331d] shrink-0 mt-0.5" />
             <p>
               <strong>Simulation notice:</strong> Victor is an AI simulation. Use fictional details and leave out real names or confidential work information. You can pause or stop at any time.
             </p>
           </div>
 
-          <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
-            <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+          <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-[#fbf8ee] border border-[#e8e3d2] text-xs text-[#2c523b]">
+            <Info className="w-4 h-4 text-[#2c523b] shrink-0 mt-0.5" />
             <p>
               <strong>Data notice:</strong> Your speech and text are sent to Google to generate replies and feedback. This prototype keeps its own conversation data only for the current session in memory. Provider retention follows the project's service settings and terms.
             </p>
@@ -193,8 +196,8 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
         )}
 
         {/* Conversation Start Tip */}
-        <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200/80 text-xs text-indigo-900 mb-6">
-          <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+        <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-[#eef6f0] border border-[#cbe5d4] text-xs text-[#0c331d] mb-6">
+          <Sparkles className="w-4 h-4 text-[#0c331d] shrink-0 mt-0.5" />
           <p>
             <strong>Starting the conversation:</strong> You initiate the conversation by greeting Victor. Victor will then share his initial guess as to what the meeting is about — unless you already mention the topic directly in your greeting.
           </p>
@@ -206,7 +209,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
             id="start-voice-practice-btn"
             onClick={handleStartVoice}
             disabled={isStartingMic}
-            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
+            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-[#0c331d] hover:bg-[#154528] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50 cursor-pointer"
           >
             <Mic className="w-4 h-4" />
             <span>{isStartingMic ? 'Checking microphone...' : 'Start voice practice'}</span>
@@ -215,7 +218,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
           <button
             id="start-text-practice-btn"
             onClick={() => onStartSession('text')}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-[#0c331d] bg-[#f4f1e5] hover:bg-[#e9e5d4] border border-[#e2decb] active:scale-[0.98] transition-all cursor-pointer"
           >
             <MessageSquare className="w-4 h-4" />
             <span>Use text instead</span>

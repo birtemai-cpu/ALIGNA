@@ -149,7 +149,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-slate-200">
+    <div className="min-h-screen flex flex-col bg-[#fbf8ee] text-[#0c331d] selection:bg-[#fef9c3]">
       {/* Navbar with brand, status indicator, and safety stop */}
       <Navbar
         sessionState={sessionState}

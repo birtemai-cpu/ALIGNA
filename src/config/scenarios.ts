@@ -3,14 +3,14 @@ import { Scenario } from '../types.js';
 export const SCENARIOS: Scenario[] = [
   {
     id: 'victor_early_warning',
-    title: 'The missed warning',
+    title: 'Repeatedly shifted deadlines',
     counterpart: 'Victor',
     counterpartRole: 'Experienced team member',
     userRole: "Victor's team lead",
     situation:
-      'Victor has missed several project deadlines. In the latest project, he did not flag that his delivery was at risk, including at the final project meeting. On the due date, the team learned that his work would be several days late. Colleagues could not begin their dependent work.',
-    goal: 'Address the missing early warning, understand what made it difficult to speak up, and agree on how delivery risks will be communicated next time.',
-    practiceFocus: ['Clear feedback', 'Curiosity', 'Accountability', 'Concrete agreement'],
+      'Victor has repeatedly postponed delivery dates and project deadlines across recent milestones. Whenever a deadline approaches, he pushes the target date back by several days or another week, often at short notice. In the latest project, he has moved the delivery date three times. Downstream colleagues and cross-functional teams cannot begin dependent work or rely on project timelines.',
+    goal: 'Address the pattern of constant deadline postponements, explore the root causes (scope creep, perfectionism, reluctance to escalate blockers), and agree on reliable delivery commitments.',
+    practiceFocus: ['Addressing repeated patterns', 'Root-cause exploration', 'Reliable commitments', 'Concrete communication rule'],
     active: true,
   },
   {

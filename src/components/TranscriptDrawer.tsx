@@ -28,15 +28,15 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
   return (
     <div
       id="transcript-drawer-container"
-      className="w-full bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all mt-4"
+      className="w-full bg-white rounded-2xl border border-[#e8e4d3] shadow-sm overflow-hidden transition-all mt-4"
     >
       {/* Header bar with toggle */}
-      <div className="flex flex-wrap items-center justify-between px-5 py-3.5 bg-slate-50/70 border-b border-slate-200/80 gap-2">
+      <div className="flex flex-wrap items-center justify-between px-5 py-3.5 bg-[#fbf8ee] border-b border-[#e8e4d3] gap-2">
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#0c331d]">
             Conversation Transcript
           </span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-mono">
+          <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#f4f1e5] text-[#0c331d] font-mono border border-[#e2decb]">
             {turns.length} {turns.length === 1 ? 'turn' : 'turns'}
           </span>
         </div>
@@ -46,10 +46,10 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
             <button
               id="replay-conversation-header-btn"
               onClick={onReplayAll}
-              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 isPlayingAll
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
+                  ? 'bg-[#0c331d] text-white shadow-2xs'
+                  : 'bg-[#fef9c3] text-[#0c331d] hover:bg-[#fef08a] border border-[#fde047]'
               }`}
               title="Listen to the entire conversation replay"
             >
@@ -70,7 +70,7 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
           <button
             id="toggle-transcript-btn"
             onClick={onToggle}
-            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
+            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#0c331d] hover:bg-[#f4f1e5] transition-colors cursor-pointer"
           >
             <span>{isOpen ? 'Hide transcript' : 'Show transcript'}</span>
             {isOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -80,9 +80,9 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
 
       {/* Collapsible body */}
       {isOpen && (
-        <div className="p-4 sm:p-6 max-h-96 overflow-y-auto space-y-4 bg-slate-50/30">
+        <div className="p-4 sm:p-6 max-h-96 overflow-y-auto space-y-4 bg-[#fcfbfa]/60">
           {turns.length === 0 ? (
-            <p className="text-xs text-slate-400 text-center py-6">
+            <p className="text-xs text-stone-400 text-center py-6">
               No dialogue yet. Begin speaking or type a response to start.
             </p>
           ) : (
@@ -97,25 +97,25 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
                   id={`turn-${turn.id}`}
                   className={`flex flex-col p-3.5 rounded-xl text-xs transition-all ${
                     isTurnPlaying
-                      ? 'ring-2 ring-indigo-500 bg-indigo-50/90 shadow-xs'
+                      ? 'ring-2 ring-[#0c331d] bg-[#fef9c3] shadow-2xs'
                       : isHighlighted
-                      ? 'ring-2 ring-blue-500 bg-blue-50/80'
+                      ? 'ring-2 ring-[#0c331d] bg-[#eef6f0]'
                       : isUser
-                      ? 'bg-white border border-slate-200 ml-4 sm:ml-8'
-                      : 'bg-indigo-50/50 border border-indigo-100 mr-4 sm:mr-8'
+                      ? 'bg-white border border-[#e8e4d3] ml-4 sm:ml-8'
+                      : 'bg-[#f4f1e5] border border-[#e2decb] mr-4 sm:mr-8'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5 text-[11px] text-slate-500">
+                  <div className="flex items-center justify-between mb-1.5 text-[11px] text-stone-500">
                     <div className="flex items-center space-x-1.5 font-semibold">
                       {isUser ? (
                         <>
-                          <User className="w-3 h-3 text-slate-700" />
-                          <span className="text-slate-800">You (Team Lead)</span>
+                          <User className="w-3 h-3 text-[#0c331d]" />
+                          <span className="text-[#0c331d]">You (Team Lead)</span>
                         </>
                       ) : (
                         <>
-                          <Bot className="w-3 h-3 text-indigo-700" />
-                          <span className="text-indigo-900">Victor</span>
+                          <Bot className="w-3 h-3 text-[#2d553e]" />
+                          <span className="text-[#0c331d]">Victor</span>
                         </>
                       )}
                     </div>
@@ -131,10 +131,10 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
                         <button
                           id={`play-turn-btn-${turn.id}`}
                           onClick={() => onPlayTurn(turn)}
-                          className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+                          className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[11px] font-medium transition-colors cursor-pointer ${
                             isTurnPlaying
-                              ? 'bg-indigo-600 text-white'
-                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                              ? 'bg-[#0c331d] text-white'
+                              : 'bg-[#eef6f0] hover:bg-[#d8edd0] text-[#0c331d]'
                           }`}
                           title="Listen to this line spoken"
                         >
@@ -145,7 +145,7 @@ export const TranscriptDrawer: React.FC<TranscriptDrawerProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-slate-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
+                  <p className="text-[#143622] text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
                     {turn.text}
                   </p>
                 </div>

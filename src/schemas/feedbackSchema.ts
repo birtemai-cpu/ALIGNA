@@ -379,35 +379,35 @@ export function createFallbackFeedback(turns: Turn[]): CoachingFeedback {
       ? {
           original_turn_id: firstUserTurn.id,
           original: firstUserTurn.text,
-          improved: 'Victor, I appreciate all your hard work on this sprint. I noticed the delivery date passed without an update. Can we look at what happened together so we can prevent surprises for the client?',
-          why: 'Grounds the opening in appreciation, cites observable facts, and invites collaboration rather than triggering defense.',
+          improved: 'Victor, I value your commitment to quality. I’ve noticed target dates have been pushed back multiple times recently. Let’s look at what’s driving these timeline shifts so we can make delivery commitments predictable for the whole team.',
+          why: 'Grounds the opening in appreciation for his standards, cites the recurring pattern factually, and invites collaboration rather than triggering defense.',
         }
       : {
           original_turn_id: 'turn-opening',
-          original: 'Victor, we need to talk about why you missed the deadline.',
-          improved: 'Victor, thanks for sitting down with me. I want to talk through the timeline on the payment module, see what blocked you, and agree on how we flag delays early.',
-          why: 'Opens with calm neutrality and collaborative intent.',
+          original: 'Victor, we need to talk about why you keep pushing the deadline.',
+          improved: 'Victor, thanks for sitting down with me. I want to talk through the repeated deadline shifts on the release, understand the underlying blockers, and agree on how we ensure reliable commitments.',
+          why: 'Opens with calm neutrality and addresses the recurring pattern without accusation.',
         },
     outcome: {
       victor_acknowledged_impact: {
         value: userTurns.length >= 2,
-        reason: userTurns.length >= 2 ? 'Victor engaged in discussion regarding the delay.' : 'Session concluded before acknowledgment was reached.',
+        reason: userTurns.length >= 2 ? 'Victor engaged in discussion regarding the impact of repeatedly shifted deadlines.' : 'Session concluded before acknowledgment was reached.',
         evidence_turn_ids: firstId,
       },
       early_warning_rule_agreed: {
-        value: userTextCombined.includes('rule') || userTextCombined.includes('warn') || userTextCombined.includes('notice'),
-        reason: userTextCombined.includes('rule') || userTextCombined.includes('notice')
-          ? 'Early warning protocol was discussed.'
-          : 'Early warning lead-time agreement was not finalized in this session.',
+        value: userTextCombined.includes('rule') || userTextCombined.includes('warn') || userTextCombined.includes('notice') || userTextCombined.includes('commit') || userTextCombined.includes('deadline'),
+        reason: userTextCombined.includes('rule') || userTextCombined.includes('notice') || userTextCombined.includes('deadline')
+          ? 'Agreement on handling deadline risks and scope trade-offs was discussed.'
+          : 'Agreement on preventing unilateral deadline postponements was not finalized in this session.',
         evidence_turn_ids: firstId,
       },
       next_step_is_specific: {
-        value: userTextCombined.includes('next') || userTextCombined.includes('tomorrow') || userTextCombined.includes('review'),
+        value: userTextCombined.includes('next') || userTextCombined.includes('tomorrow') || userTextCombined.includes('review') || userTextCombined.includes('checkpoint'),
         reason: 'Specific next step follow-up was noted.',
         evidence_turn_ids: firstId,
       },
     },
-    next_attempt_focus: 'Establish a concrete 48-hour early warning agreement when unexpected blockers occur.',
+    next_attempt_focus: 'Establish a concrete agreement that deadlines cannot be pushed unilaterally, and trade-offs are flagged early.',
   };
 
   feedback.spoken_script = generateSpokenFeedbackScript(feedback);
