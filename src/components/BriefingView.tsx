@@ -196,7 +196,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({
         <div className="flex items-start space-x-2.5 p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200/80 text-xs text-indigo-900 mb-6">
           <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
           <p>
-            <strong>Gesprächsbeginn:</strong> Du startest das Gespräch und begrüßt Victor erst einmal. Danach äußert Victor seine Vermutung, worum es geht — außer du teilst ihm das Thema bereits in deiner Begrüßung mit.
+            <strong>Starting the conversation:</strong> You initiate the conversation by greeting Victor. Victor will then share his initial guess as to what the meeting is about — unless you already mention the topic directly in your greeting.
           </p>
         </div>
 

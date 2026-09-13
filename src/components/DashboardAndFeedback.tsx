@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Play,
   Pause,
   RotateCcw,
   Volume2,
@@ -11,9 +10,6 @@ import {
   ArrowRight,
   Trash2,
   Sparkles,
-  ChevronDown,
-  ChevronUp,
-  AlertTriangle,
 } from 'lucide-react';
 import { CoachingFeedback, Turn, QualitativeStatus } from '../types.js';
 import { ALIGNA_CONFIG } from '../config/models.js';
@@ -33,11 +29,6 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
   onPracticeAgain,
   onDiscardSession,
 }) => {
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [audioError, setAudioError] = useState<string | null>(null);
-  const [audioLoaded, setAudioLoaded] = useState(false);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [showFeedbackText, setShowFeedbackText] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [highlightedTurnId, setHighlightedTurnId] = useState<string | null>(null);
 
@@ -46,52 +37,10 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
   const [playingTurnId, setPlayingTurnId] = useState<string | null>(null);
 
   const audioManagerRef = useRef<AudioPlaybackManager | null>(null);
-  const audioBase64Ref = useRef<string | null>(null);
   const conversationAbortRef = useRef<boolean>(false);
 
-  // Fetch feedback audio (spoken script)
-  const fetchFeedbackAudio = async (autoPlay: boolean = false) => {
-    try {
-      setIsLoadingAudio(true);
-      setAudioError(null);
-      const script = feedback.spoken_script || feedback.summary;
-
-      const res = await fetch('/api/coach/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: script, voice: 'coach' }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.audio) {
-        throw new Error(data.error || 'Unable to generate audio feedback.');
-      }
-
-      audioBase64Ref.current = data.audio;
-      setAudioLoaded(true);
-
-      if (autoPlay) {
-        if (!audioManagerRef.current) {
-          audioManagerRef.current = new AudioPlaybackManager();
-        }
-        audioManagerRef.current.playChunk(data.audio);
-        setIsPlayingAudio(true);
-      }
-      return data.audio;
-    } catch (err: any) {
-      console.warn('TTS error fallback:', err);
-      setAudioError('Feedback audio could not be generated. You can view the full feedback text below.');
-      setShowFeedbackText(true);
-      return null;
-    } finally {
-      setIsLoadingAudio(false);
-    }
-  };
-
-  // Load speech synthesis of feedback on mount
+  // Oral feedback is deactivated; cleanup any conversation replay on unmount
   useEffect(() => {
-    fetchFeedbackAudio(true);
-
     return () => {
       conversationAbortRef.current = true;
       if (audioManagerRef.current) {
@@ -99,48 +48,7 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
         audioManagerRef.current = null;
       }
     };
-  }, [feedback]);
-
-  // Audio Playback Controls for Feedback
-  const handlePlayAudio = async () => {
-    // Stop any ongoing conversation replay
-    stopConversationReplay();
-
-    if (!audioBase64Ref.current) {
-      await fetchFeedbackAudio(true);
-      return;
-    }
-
-    if (!audioManagerRef.current) {
-      audioManagerRef.current = new AudioPlaybackManager();
-    }
-    audioManagerRef.current.playChunk(audioBase64Ref.current);
-    setIsPlayingAudio(true);
-  };
-
-  const handlePauseAudio = async () => {
-    if (audioManagerRef.current) {
-      await audioManagerRef.current.pause();
-      setIsPlayingAudio(false);
-    }
-  };
-
-  const handleReplayAudio = async () => {
-    // Stop any ongoing conversation replay
-    stopConversationReplay();
-
-    if (!audioBase64Ref.current) {
-      await fetchFeedbackAudio(true);
-      return;
-    }
-
-    if (!audioManagerRef.current) {
-      audioManagerRef.current = new AudioPlaybackManager();
-    }
-    audioManagerRef.current.stopAndClear();
-    audioManagerRef.current.playChunk(audioBase64Ref.current);
-    setIsPlayingAudio(true);
-  };
+  }, []);
 
   // Conversation Replay Logic
   const stopConversationReplay = () => {
@@ -156,11 +64,6 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
     if (isPlayingFullConversation) {
       stopConversationReplay();
       return;
-    }
-
-    // Stop feedback audio
-    if (isPlayingAudio) {
-      handlePauseAudio();
     }
 
     if (turns.length === 0) return;
@@ -213,9 +116,6 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
 
   const handlePlayTurn = async (turn: Turn) => {
     stopConversationReplay();
-    if (isPlayingAudio) {
-      handlePauseAudio();
-    }
 
     setPlayingTurnId(turn.id);
     if (!audioManagerRef.current) {
@@ -254,7 +154,6 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
       audioManagerRef.current.destroy();
       audioManagerRef.current = null;
     }
-    audioBase64Ref.current = null;
     onDiscardSession();
   };
 
@@ -300,145 +199,63 @@ export const DashboardAndFeedback: React.FC<DashboardAndFeedbackProps> = ({
         </p>
       </div>
 
-      {/* Audio Error Banner */}
-      {audioError && (
-        <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
-            <span>{audioError}</span>
-          </div>
-          <button
-            onClick={() => setShowFeedbackText(true)}
-            className="font-semibold underline ml-3 shrink-0"
-          >
-            Show text
-          </button>
-        </div>
-      )}
-
-      {/* Spoken Coach Audio Player Bar */}
+      {/* Written Coach Evaluation & Summary (Oral feedback is deactivated) */}
       <div
-        id="feedback-audio-player-card"
-        className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        id="coach-feedback-summary-card"
+        className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs mb-8"
       >
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 shrink-0">
-            <Volume2 className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-bold text-slate-900">Spoken Coach Feedback</span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-medium">
-                Voice: {ALIGNA_CONFIG.voices.coach}
-              </span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0">
+              <FileText className="w-5 h-5" />
             </div>
-            <p className="text-xs text-slate-500">
-              {isPlayingAudio ? 'Coach is reading your feedback…' : 'Spoken audio review of your conversation.'}
-            </p>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Coach Feedback & Summary</h2>
+              <p className="text-xs text-slate-500">
+                Detailed written review of your conversation.
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Play / Pause / Replay Controls */}
-        <div className="flex flex-wrap items-center gap-2">
-          {isPlayingAudio ? (
-            <button
-              id="pause-feedback-audio-btn"
-              onClick={handlePauseAudio}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition-colors shadow-xs"
-            >
-              <Pause className="w-3.5 h-3.5" />
-              <span>Pause feedback</span>
-            </button>
-          ) : (
-            <button
-              id="play-feedback-audio-btn"
-              onClick={handlePlayAudio}
-              disabled={isLoadingAudio}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 transition-colors shadow-xs"
-            >
-              <Play className="w-3.5 h-3.5" />
-              <span>{isLoadingAudio ? 'Loading…' : 'Play feedback'}</span>
-            </button>
-          )}
-
-          {/* Replay feedback button */}
-          <button
-            id="replay-feedback-audio-btn"
-            onClick={handleReplayAudio}
-            disabled={isLoadingAudio}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors cursor-pointer"
-            title="Replay coach feedback from start"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-indigo-700" />
-            <span>Replay audio</span>
-          </button>
-
-          {/* Replay full conversation shortcut */}
+          {/* Quick action: replay conversation dialogue audio if turns exist */}
           {turns.length > 0 && (
             <button
               id="replay-conversation-top-btn"
               onClick={handleReplayFullConversation}
-              className={`inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              className={`inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
                 isPlayingFullConversation
                   ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'
               }`}
               title="Listen to the entire conversation replay with Victor and your responses"
             >
               {isPlayingFullConversation ? (
                 <>
                   <Pause className="w-3.5 h-3.5" />
-                  <span>Pause replay</span>
+                  <span>Pause conversation replay</span>
                 </>
               ) : (
                 <>
-                  <Volume2 className="w-3.5 h-3.5 text-indigo-700" />
+                  <Volume2 className="w-3.5 h-3.5 text-slate-700" />
                   <span>Replay conversation</span>
                 </>
               )}
             </button>
           )}
-
-          {/* Toggle feedback text */}
-          <button
-            id="toggle-feedback-text-btn"
-            onClick={() => setShowFeedbackText(!showFeedbackText)}
-            className="inline-flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>{showFeedbackText ? 'Hide feedback text' : 'Show feedback text'}</span>
-          </button>
         </div>
+
+        <div className="prose prose-sm max-w-none text-slate-800 space-y-3 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
+          {feedback.summary || feedback.spoken_script}
+        </div>
+
+        {feedback.limitations && feedback.limitations.length > 0 && (
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <p className="text-[11px] text-slate-400 font-medium">
+              Note: {feedback.limitations.join(' ')}
+            </p>
+          </div>
+        )}
       </div>
-
-      {/* Expandable Feedback Text Script (Identical to spoken audio) */}
-      {showFeedbackText && (
-        <div
-          id="feedback-text-container"
-          className="bg-indigo-50/50 rounded-2xl border border-indigo-100 p-6 mb-8 animate-in fade-in duration-150"
-        >
-          <div className="flex items-center justify-between border-b border-indigo-100/80 pb-3 mb-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-900">
-                Spoken Feedback Text Script
-              </span>
-              <span className="text-[11px] text-indigo-600 font-medium">
-                (Identical content to spoken audio)
-              </span>
-            </div>
-            <button
-              onClick={() => setShowFeedbackText(false)}
-              className="text-xs text-indigo-700 hover:text-indigo-900 font-semibold"
-            >
-              Hide text
-            </button>
-          </div>
-
-          <div className="prose prose-sm max-w-none text-slate-800 space-y-4 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
-            {feedback.spoken_script || feedback.summary}
-          </div>
-        </div>
-      )}
 
       {/* 1. Small Conversation Quality Dashboard (6 Criteria) */}
       <div className="mb-8">

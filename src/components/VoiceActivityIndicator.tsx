@@ -48,7 +48,7 @@ export const VoiceActivityIndicator: React.FC<VoiceActivityIndicatorProps> = ({
       badgeColor = 'bg-slate-100 text-slate-600 border-slate-200';
       icon = <Mic className="w-4 h-4 text-slate-400" />;
     } else if (isWaitingForGreeting) {
-      statusText = 'Victor hört zu — begrüße ihn, um das Gespräch zu beginnen';
+      statusText = 'Victor is listening — greet him to begin the conversation';
       badgeColor = 'bg-emerald-50 text-emerald-900 border-emerald-300 font-semibold';
       icon = <Mic className="w-4 h-4 text-emerald-600 animate-pulse" />;
     } else {

@@ -107,7 +107,7 @@ app.post('/api/roleplay/chat', async (req, res) => {
     } else if (turns.length === 0) {
       contents.push({
         role: 'user',
-        parts: [{ text: 'Hallo Victor, hast du kurz Zeit?' }],
+        parts: [{ text: 'Hi Victor, do you have a quick minute?' }],
       });
     }
 
@@ -382,7 +382,7 @@ wss.on('connection', (clientWs: WebSocket) => {
         // requestOpening is only sent if specifically requested.
         if (msg.requestOpening) {
           liveSession.sendRealtimeInput({
-            text: msg.openingText || 'Hallo Victor, hast du kurz Zeit?',
+            text: msg.openingText || 'Hi Victor, do you have a quick minute?',
           });
         }
       } else if (msg.type === 'audio' && isSessionActive && liveSession) {

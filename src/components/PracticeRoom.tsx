@@ -444,29 +444,29 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
             <Sparkles className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-indigo-950">
-                Du beginnst: Begrüße Victor erst einmal
+                You begin: Greet Victor to start the conversation
               </p>
               <p className="mt-0.5 text-xs text-indigo-800 leading-relaxed">
-                Sprich ins Mikrofon oder tippe unten deine Begrüßung. Wenn du das Thema nicht direkt nennst, äußert Victor seine Vermutung, worum es geht.
+                Speak into the microphone or type your greeting below. If you don't mention the topic directly, Victor will venture a guess about what it is about.
               </p>
             </div>
           </div>
           <div className="flex flex-wrap sm:flex-nowrap gap-1.5 shrink-0 w-full sm:w-auto">
             <button
               type="button"
-              onClick={() => setTextInput('Hallo Victor, hast du kurz Zeit für mich?')}
+              onClick={() => setTextInput('Hi Victor, do you have a quick minute for me?')}
               className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-100 text-indigo-700 text-xs font-medium border border-indigo-200 transition-colors cursor-pointer"
-              title="Begrüßung einfügen"
+              title="Insert greeting"
             >
-              „Hallo Victor, hast du kurz Zeit?“
+              "Hi Victor, got a quick minute?"
             </button>
             <button
               type="button"
-              onClick={() => setTextInput('Hallo Victor, ich möchte über die Verzögerung beim Release sprechen.')}
+              onClick={() => setTextInput('Hi Victor, I would like to talk about the release delay.')}
               className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-100 text-indigo-700 text-xs font-medium border border-indigo-200 transition-colors cursor-pointer"
-              title="Begrüßung mit Thema einfügen"
+              title="Insert greeting with topic"
             >
-              „Mit Thema beginnen…“
+              "Start with topic directly..."
             </button>
           </div>
         </div>
@@ -597,8 +597,8 @@ export const PracticeRoom: React.FC<PracticeRoomProps> = ({
           onChange={(e) => setTextInput(e.target.value)}
           placeholder={
             turns.length === 0
-              ? "Begrüße Victor (z. B. 'Hallo Victor, hast du kurz Zeit?') oder sprich ins Mikrofon…"
-              : "Sprich ins Mikrofon oder tippe hier deine Antwort an Victor…"
+              ? "Greet Victor (e.g. 'Hi Victor, do you have a quick minute?') or speak into the microphone…"
+              : "Speak into your microphone or type your response to Victor here…"
           }
           disabled={sessionState === 'paused' || isSubmittingText}
           className="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 disabled:bg-slate-100 transition-all"
