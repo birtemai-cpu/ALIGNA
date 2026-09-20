@@ -279,7 +279,7 @@ app.post('/api/coach/tts', async (req, res) => {
 const wss = new WebSocketServer({ noServer: true });
 
 server.on('upgrade', (request, socket, head) => {
-  const pathname = request.url ? new URL(request.url, `http://${request.headers.host}`).pathname : '';
+  const pathname = request.url ? request.url.split('?')[0] : '';
   if (pathname === '/api/live') {
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
